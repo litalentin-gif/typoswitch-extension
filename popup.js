@@ -1,5 +1,6 @@
 const fixBtn = document.getElementById("fixBtn");
 const statusEl = document.getElementById("status");
+const settingsBtn = document.getElementById("settingsBtn");
 
 fixBtn.addEventListener("click", () => {
   chrome.runtime.sendMessage({ type: "POPUP_FIX_LAYOUT" }, (response) => {
@@ -9,7 +10,8 @@ fixBtn.addEventListener("click", () => {
       statusEl.textContent = "Could not run on this page";
     }
   });
-  document.getElementById("settingsBtn").addEventListener("click", () => {
-  chrome.runtime.openOptionsPage();
 });
+
+settingsBtn.addEventListener("click", () => {
+  chrome.runtime.openOptionsPage();
 });
