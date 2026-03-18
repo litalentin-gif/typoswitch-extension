@@ -6,7 +6,6 @@ chrome.commands.onCommand.addListener(async (command) => {
     if (!tab?.id) return;
 
     await chrome.tabs.sendMessage(tab.id, { type: "FIX_LAYOUT" });
-    console.log("FIX_LAYOUT sent from command");
   } catch (error) {
     console.warn("Could not establish connection to content script:", error);
   }
@@ -25,24 +24,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         await chrome.tabs.sendMessage(tab.id, { type: "FIX_LAYOUT" });
         sendResponse({ ok: true });
       } catch (error) {
-        console.warn("Popup could not send message to content script:", error);
         sendResponse({ ok: false, error: String(error) });
       }
     });
 
     return true;
   }
-  chrome.runtime.onInstalled.addListener(() => {
+});
+
+chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "fixLayout",
     title: "Fix keyboard layout",
     contexts: ["selection"]
   });
-  });
+});
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "fixLayout" && tab?.id) {
     chrome.tabs.sendMessage(tab.id, { type: "FIX_LAYOUT" });
   }
-});
 });

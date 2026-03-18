@@ -3,6 +3,7 @@
   "name": "TypoSwitch",
   "version": "1.0.0",
   "description": "Fix Hebrew/English keyboard layout mistakes in text fields.",
+  "permissions": ["storage", "contextMenus"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
@@ -11,6 +12,7 @@
     "default_title": "TypoSwitch",
     "default_popup": "popup.html"
   },
+  "options_page": "settings.html",
   "commands": {
   "fix-layout": {
     "suggested_key": {
@@ -25,7 +27,5 @@
       "js": ["content.js"],
       "run_at": "document_idle"
     }
-  ],
-  "permissions": ["storage", "contextMenus"],
-  "options_page": "settings.html"
+  ]
 }
