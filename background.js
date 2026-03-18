@@ -32,4 +32,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     return true;
   }
+  chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "fixLayout",
+    title: "Fix keyboard layout",
+    contexts: ["selection"]
+  });
+  });
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "fixLayout" && tab?.id) {
+    chrome.tabs.sendMessage(tab.id, { type: "FIX_LAYOUT" });
+  }
+});
 });

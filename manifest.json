@@ -26,6 +26,6 @@
       "run_at": "document_idle"
     }
   ],
-  "permissions": ["storage"],
+  "permissions": ["storage", "contextMenus"],
   "options_page": "settings.html"
 }
