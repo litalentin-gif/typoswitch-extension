@@ -14,9 +14,13 @@
 
   function convertChar(ch) {
     const lower = ch.toLowerCase();
+    const isUpper = ch !== lower;
 
     if (enToHe[lower]) return enToHe[lower];
     if (heToEn[ch]) return heToEn[ch];
+
+    const enChar = heToEn[lower];
+    if (enChar) return isUpper ? enChar.toUpperCase() : enChar;
 
     return ch;
   }
@@ -129,22 +133,21 @@
 
   function handleFix() {
     const el = document.activeElement;
+    let fixed = false;
 
     if (isTextInput(el)) {
-      if (replaceSelectedTextInInput(el)) return;
-      replaceLastWordInInput(el);
-      return;
+      fixed = replaceSelectedTextInInput(el) || replaceLastWordInInput(el);
+    } else if (el?.isContentEditable) {
+      fixed = replaceSelectionInContentEditable() || replaceLastWordInContentEditable();
     }
 
-    if (el?.isContentEditable) {
-      if (replaceSelectionInContentEditable()) return;
-      replaceLastWordInContentEditable();
+    if (fixed) {
+      chrome.storage.sync.get(["showToast"], (data) => {
+        if (data.showToast !== false) {
+          showToast("TypoSwitch applied ✨");
+        }
+      });
     }
-    chrome.storage.sync.get(["showToast"], (data) => {
-      if (data.showToast !== false) {
-    showToast("TypoSwitch applied ✨");
-  }
-});
   }
 
   chrome.runtime.onMessage.addListener((message) => {
@@ -153,30 +156,30 @@
     }
   });
   function showToast(text) {
-  const el = document.createElement("div");
-  el.textContent = text;
+    const el = document.createElement("div");
+    el.textContent = text;
 
-  Object.assign(el.style, {
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    background: "#222",
-    color: "#fff",
-    padding: "10px 14px",
-    borderRadius: "10px",
-    fontSize: "13px",
-    zIndex: 999999,
-    opacity: 0,
-    transition: "opacity 0.3s"
-  });
+    Object.assign(el.style, {
+      position: "fixed",
+      bottom: "20px",
+      right: "20px",
+      background: "#222",
+      color: "#fff",
+      padding: "10px 14px",
+      borderRadius: "10px",
+      fontSize: "13px",
+      zIndex: 999999,
+      opacity: 0,
+      transition: "opacity 0.3s"
+    });
 
-  document.body.appendChild(el);
+    document.body.appendChild(el);
 
-  setTimeout(() => (el.style.opacity = 1), 10);
+    setTimeout(() => (el.style.opacity = 1), 10);
 
-  setTimeout(() => {
-    el.style.opacity = 0;
-    setTimeout(() => el.remove(), 300);
-  }, 1500);
-}
+    setTimeout(() => {
+      el.style.opacity = 0;
+      setTimeout(() => el.remove(), 300);
+    }, 1500);
+  }
 })();
